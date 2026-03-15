@@ -7,7 +7,7 @@
                 <!--遍历博客-->
                 <el-timeline-item :timestamp="postVo.post.createTimeStr" placement="top" v-for="postVo in records">
                     <el-card>
-                        <el-avatar :src=postVo.user.avatar></el-avatar>
+                        <el-avatar :src="postVo.user.avatar && !postVo.user.avatar.startsWith('http') ? uploadPath.replace(/\/$/, '') + postVo.user.avatar : postVo.user.avatar"></el-avatar>
                         <router-link :to="{name: 'Profile' ,params: {uid : postVo.user.id}}">
                             <span v-text="postVo.user.username"></span>
                         </router-link>

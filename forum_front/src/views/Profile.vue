@@ -35,7 +35,7 @@
                             <button type="button" v-if="!isMine" @click="chat(user)" class="btn btn-info btn-sm float-right mr-5 follow-btn">发消息</button>
                         </h5>
                         <div class="text-muted mt-3">
-                            <span>注册于 <i class="text-muted">{{formatDate(user.createTime)}}</i></span>
+                            <span>注册于 <i class="text-muted">{{user.createTimeStr || formatDate(user.createTime)}}</i></span>
                         </div>
                         <div class="text-muted mt-3 mb-5">
                             <span>关注了

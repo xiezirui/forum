@@ -124,7 +124,7 @@
             getInfo(token){
                 const _this = this;
                 this.$axios({
-                    method:'post',
+                    method:'get',
                     url:'/user/getInfo',
                     headers: {
                         'Authorization': token
@@ -133,7 +133,12 @@
                     //保存用户信息
                     //保存用户
                     console.log("userInfo:",res.data.data)
-                    _this.$store.commit("setUserInfo", res.data.data);
+                    const userData = res.data.data;
+                    // 拼接完整的头像URL
+                    if (userData.avatar && !userData.avatar.startsWith('http')) {
+                        userData.avatar = _this.$axios.defaults.baseURL.replace(/\/$/, '') + userData.avatar;
+                    }
+                    _this.$store.commit("setUserInfo", userData);
                     _this.$store.commit("setLoginState",true);
                     console.log(res);
                 }).catch(function(error){

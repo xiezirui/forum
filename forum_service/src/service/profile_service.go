@@ -66,6 +66,7 @@ func (s *ProfileService) GetProfile(userID, currentUserID int64) (*ProfileData, 
 		FollowerCount: followerCount,
 		LikeCount:     likeCount,
 		HasFollowed:   hasFollowed,
+		CreateTimeStr: user.CreateTime.Format("2006-01-02"),
 	}
 
 	return profileData, nil
@@ -121,4 +122,5 @@ type ProfileData struct {
 	FollowerCount int64       `json:"followerCount"`
 	LikeCount     int64       `json:"likeCount"`
 	HasFollowed   bool        `json:"hasFollowed"`
+	CreateTimeStr string      `json:"createTimeStr"` // 格式化的创建时间
 }

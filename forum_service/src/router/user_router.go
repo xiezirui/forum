@@ -2,6 +2,7 @@ package router
 
 import (
 	"forum_service/src/controller"
+
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -24,6 +25,12 @@ func SetupUserRoutes(r *gin.Engine, db *gorm.DB) {
 		userGroup.POST("/login", userController.Login)
 
 		// 获取用户信息
-		userGroup.POST("/getInfo", userController.GetInfo)
+		userGroup.GET("/getInfo", userController.GetInfo)
+
+		// 上传头像
+		userGroup.POST("/avatar", userController.UploadAvatar)
+
+		// 修改密码
+		userGroup.POST("/resetPass", userController.ChangePassword)
 	}
 }

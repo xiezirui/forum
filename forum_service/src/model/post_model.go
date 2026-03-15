@@ -4,17 +4,18 @@ import "time"
 
 // Post 帖子表模型
 type Post struct {
-	ID         int64     `gorm:"column:id;primaryKey;autoIncrement" json:"id"`
-	Title      string    `gorm:"column:title;type:varchar(255);not null" json:"title"`
-	Content    string    `gorm:"column:content;type:text;not null" json:"content"`
-	UserID     int64     `gorm:"column:user_id;not null;index" json:"user_id"`     // 发布者ID
-	CategoryID int64     `gorm:"column:category_id;index" json:"category_id"`       // 分类ID
-	Views      int64     `gorm:"column:views;default:0" json:"views"`               // 浏览量
-	Status     int       `gorm:"column:status;type:tinyint;default:1" json:"status"` // 1:正常 0:禁用
-	Type       int       `gorm:"column:type;type:int(11);default:0" json:"type"`     // 1:置顶 0:普通
-	LikeCount  int64     `gorm:"column:like_count;type:int(11);default:0" json:"likeCount"` // 点赞数
-	CreatedAt  time.Time `gorm:"column:created_at;autoCreateTime" json:"createdAt"`
-	UpdatedAt  time.Time `gorm:"column:updated_at;autoUpdateTime" json:"updatedAt"`
+	ID           int64     `gorm:"column:id;primaryKey;autoIncrement" json:"id"`
+	Title        string    `gorm:"column:title;type:varchar(255);not null" json:"title"`
+	Content      string    `gorm:"column:content;type:text;not null" json:"content"`
+	UserID       int64     `gorm:"column:user_id;not null;index" json:"user_id"`     // 发布者ID
+	CategoryID   int64     `gorm:"column:category_id;index" json:"category_id"`       // 分类ID
+	Views        int64     `gorm:"column:views;default:0" json:"views"`               // 浏览量
+	Status       int       `gorm:"column:status;type:tinyint;default:1" json:"status"` // 1:正常 0:禁用
+	Type         int       `gorm:"column:type;type:int(11);default:0" json:"type"`     // 1:置顶 0:普通
+	LikeCount    int64     `gorm:"column:like_count;type:int(11);default:0" json:"likeCount"` // 点赞数
+	CreatedAt    time.Time `gorm:"column:created_at;autoCreateTime" json:"createdAt"`
+	UpdatedAt    time.Time `gorm:"column:updated_at;autoUpdateTime" json:"updatedAt"`
+	CreateTimeStr string    `gorm:"-" json:"createTimeStr"` // 格式化的创建时间，不存储到数据库
 }
 
 // TableName 指定表名

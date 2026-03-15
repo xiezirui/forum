@@ -128,3 +128,31 @@ func (s *UserService) GetInfo(token string) (*model.User, error) {
 
 	return &user, nil
 }
+
+// UpdateAvatar 更新用户头像
+func (s *UserService) UpdateAvatar(userID int64, avatarURL string) error {
+	return s.db.Model(&model.User{}).Where("id = ?", userID).Update("avatar", avatarURL).Error
+}
+
+// ChangePassword 修改密码
+func (s *UserService) ChangePassword(userID int64, oldPassword, newPassword string) error {
+	// 查询用户
+	var user model.User
+	if err := s.db.Where("id = ?", userID).First(&user).Error; err != nil {
+		return errors.New("用户不存在")
+	}
+
+	// 验证旧密码
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(oldPassword)); err != nil {
+		return errors.New("旧密码错误")
+	}
+
+	// 加密新密码
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	// 更新密码
+	return s.db.Model(&model.User{}).Where("id = ?", userID).Update("password", string(hashedPassword)).Error
+}

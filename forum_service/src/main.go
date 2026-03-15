@@ -82,14 +82,18 @@ func main() {
 		log.Fatal("数据库迁移失败:", err)
 	}
 
-	// 4. 设置路由
+	// 4. 设置静态文件服务
+	r.Static("/uploads", "./uploads")
+
+	// 5. 设置路由
 	r.Use(JWTMiddleware)
 	router.SetupUserRoutes(r, db)
 	router.SetupProfileRoutes(r, db)
 	router.SetupUserPostRoutes(r, db)
 	router.SetupCollectionRoutes(r, db)
+	router.SetupPostRoutes(r, db)
 
-	// 5. 启动服务器
+	// 6. 启动服务器
 	// 监听并在 0.0.0.0:8089 上启动服务
 	r.Run(":8089")
 }

@@ -40,3 +40,33 @@ func GetPostByID(db *gorm.DB, postID int64) (*model.Post, error) {
 	}
 	return &post, nil
 }
+
+// GetPostList 获取帖子列表
+func GetPostList(db *gorm.DB, currentPage, pageSize int) ([]*model.Post, int64, error) {
+	var posts []*model.Post
+	var total int64
+
+	// 获取总数
+	err := db.Model(&model.Post{}).Count(&total).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// 获取分页数据
+	offset := (currentPage - 1) * pageSize
+	err = db.Order("created_at DESC").
+		Limit(pageSize).
+		Offset(offset).
+		Find(&posts).Error
+
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return posts, total, nil
+}
+
+// CreatePost 创建帖子
+func CreatePost(db *gorm.DB, post *model.Post) error {
+	return db.Create(post).Error
+}

@@ -19,3 +19,13 @@ func GetUserByUsername(db *gorm.DB, username string) (*model.User, error) {
 	}
 	return &user, nil
 }
+
+// GetUserByID 根据ID获取用户
+func GetUserByID(db *gorm.DB, userID int64) (*model.User, error) {
+	var user model.User
+	err := db.Where("id = ?", userID).First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}

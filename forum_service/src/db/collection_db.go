@@ -30,7 +30,7 @@ func GetCollectionsByUserID(db *gorm.DB, userID int64, currentPage, pageSize int
 	// 手动关联查询帖子信息
 	for _, collection := range collections {
 		var post model.Post
-		err := db.Where("id = ?", collection.PostID).First(&post).Error
+		err := db.Where("id = ? AND status = 1", collection.PostID).First(&post).Error
 		if err == nil {
 			collection.Post = &post
 		}

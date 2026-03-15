@@ -19,5 +19,11 @@ func SetupUserRoutes(r *gin.Engine, db *gorm.DB) {
 
 		// 添加用户
 		userGroup.POST("/add", userController.AddUser)
+
+		// 用户登录
+		userGroup.POST("/login", userController.Login)
+
+		// 获取用户信息
+		userGroup.POST("/getInfo", userController.GetInfo)
 	}
 }

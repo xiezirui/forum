@@ -121,11 +121,14 @@
                     }
                 });
             },
-            getInfo(){
+            getInfo(token){
                 const _this = this;
                 this.$axios({
                     method:'post',
                     url:'/user/getInfo',
+                    headers: {
+                        'Authorization': token
+                    }
                 }).then(function(res){
                     //保存用户信息
                     //保存用户

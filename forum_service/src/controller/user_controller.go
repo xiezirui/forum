@@ -29,6 +29,12 @@ type RegisterRequest struct {
 	Gender   int    `json:"gender"`
 }
 
+// LoginRequest 用户登录请求结构
+type LoginRequest struct {
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
 // Register 用户注册
 // @Summary 用户注册
 // @Tags 用户
@@ -110,6 +116,120 @@ func (uc *UserController) AddUser(c *gin.Context) {
 			"username": newUser.Username,
 			"email":    newUser.Email,
 			"gender":   newUser.Gender,
+		},
+	})
+}
+
+// Login 用户登录
+// @Summary 用户登录
+// @Tags 用户
+// @Accept json
+// @Produce json
+// @Param user body LoginRequest true "用户登录信息"
+// @Success 200 {object} object "登录成功"
+// @Router /user/login [post]
+func (uc *UserController) Login(c *gin.Context) {
+	var req LoginRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "参数错误: " + err.Error(),
+			"data":    nil,
+		})
+		return
+	}
+
+	// 调用service层登录
+	user, err := uc.userService.Login(req.Username, req.Password)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"code":    401,
+			"message": "用户名或密码错误",
+			"data":    nil,
+		})
+		return
+	}
+
+	// 检查用户状态
+	if user.State != 1 {
+		c.JSON(http.StatusForbidden, gin.H{
+			"code":    403,
+			"message": "账户已被禁用",
+			"data":    nil,
+		})
+		return
+	}
+
+	// 生成JWT token
+	token, err := uc.userService.GenerateToken(user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code":    500,
+			"message": "生成token失败: " + err.Error(),
+			"data":    nil,
+		})
+		return
+	}
+
+	// 返回用户信息和token
+	c.JSON(http.StatusOK, gin.H{
+		"code":    200,
+		"message": "登录成功",
+		"data": gin.H{
+			"token": token,
+			"user": gin.H{
+				"id":       user.ID,
+				"username": user.Username,
+				"email":    user.Email,
+				"gender":   user.Gender,
+				"avatar":   user.Avatar,
+				"rid":      user.RID,
+			},
+		},
+	})
+}
+
+// GetInfo 获取用户信息
+// @Summary 获取用户信息
+// @Tags 用户
+// @Accept json
+// @Produce json
+// @Success 200 {object} object "成功"
+// @Router /user/getInfo [post]
+func (uc *UserController) GetInfo(c *gin.Context) {
+	// 从请求头获取token
+	token := c.GetHeader("Authorization")
+	if token == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"code":    401,
+			"message": "未授权，请先登录",
+			"data":    nil,
+		})
+		return
+	}
+
+	// 调用service层获取用户信息
+	user, err := uc.userService.GetInfo(token)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"code":    401,
+			"message": "获取用户信息失败: " + err.Error(),
+			"data":    nil,
+		})
+		return
+	}
+
+	// 返回用户信息
+	c.JSON(http.StatusOK, gin.H{
+		"code":    200,
+		"message": "获取用户信息成功",
+		"data": gin.H{
+			"id":       user.ID,
+			"username": user.Username,
+			"email":    user.Email,
+			"gender":   user.Gender,
+			"avatar":   user.Avatar,
+			"rid":      user.RID,
 		},
 	})
 }

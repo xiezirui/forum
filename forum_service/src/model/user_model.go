@@ -9,7 +9,7 @@ type User struct {
 	Password   string    `gorm:"column:password;type:varchar(60);not null" json:"-"` // 密码不返回给前端
 	Email      string    `gorm:"column:email;type:varchar(60);not null" json:"email"`
 	Gender     int       `gorm:"column:gender;type:int(11);not null" json:"gender"`
-	CreateTime time.Time `gorm:"column:create_time;type:date;not null" json:"create_time"`
+	CreateTime time.Time `gorm:"column:create_time;type:date;not null" json:"createTime"`
 	Avatar     string    `gorm:"column:avatar;type:varchar(100)" json:"avatar"`
 	Code       string    `gorm:"column:code;type:varchar(50)" json:"code"`
 	State      int       `gorm:"column:state;type:int(1)" json:"state"` // 状态

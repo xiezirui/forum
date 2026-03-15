@@ -3,7 +3,9 @@ package main
 import (
 	"forum_service/src/model"
 	"forum_service/src/router"
+	"forum_service/src/service"
 	"log"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
@@ -29,6 +31,28 @@ func main() {
 		c.Next()
 	})
 
+	// JWT中间件
+	JWTMiddleware := func(c *gin.Context) {
+		// 获取Authorization header
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.Next()
+			return
+		}
+
+		// 解析token
+		token := strings.TrimSpace(authHeader)
+		claims, err := service.ParseToken(token)
+		if err != nil {
+			c.Next()
+			return
+		}
+
+		// 将用户ID存入上下文
+		c.Set("user_id", claims.UserID)
+		c.Next()
+	}
+
 	// 2. 初始化数据库连接
 	dsn := "root:123456@tcp(127.0.0.1:3306)/forum_server?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
@@ -41,9 +65,19 @@ func main() {
 	if err != nil {
 		log.Fatal("数据库迁移失败:", err)
 	}
+	err = db.AutoMigrate(&model.Follow{})
+	if err != nil {
+		log.Fatal("数据库迁移失败:", err)
+	}
+	err = db.AutoMigrate(&model.Like{})
+	if err != nil {
+		log.Fatal("数据库迁移失败:", err)
+	}
 
 	// 4. 设置路由
+	r.Use(JWTMiddleware)
 	router.SetupUserRoutes(r, db)
+	router.SetupProfileRoutes(r, db)
 
 	// 5. 启动服务器
 	// 监听并在 0.0.0.0:8089 上启动服务

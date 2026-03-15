@@ -35,7 +35,7 @@
                             <button type="button" v-if="!isMine" @click="chat(user)" class="btn btn-info btn-sm float-right mr-5 follow-btn">发消息</button>
                         </h5>
                         <div class="text-muted mt-3">
-                            <span>注册于 <i class="text-muted" v-text="user.createTime">2015-06-12 15:20:12</i></span>
+                            <span>注册于 <i class="text-muted">{{formatDate(user.createTime)}}</i></span>
                         </div>
                         <div class="text-muted mt-3 mb-5">
                             <span>关注了
@@ -151,6 +151,14 @@
         methods:{
             fail(msg) {
                 this.$message.error(msg);
+            },
+            formatDate(dateString) {
+                if (!dateString) return '';
+                const date = new Date(dateString);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
             },
             handleExceed(file,fileList){
                 this.$message.error("只能上传一张图片")

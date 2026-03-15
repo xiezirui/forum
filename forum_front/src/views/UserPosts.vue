@@ -34,7 +34,7 @@
                                         <router-link :to="{name : 'PostDetail' , params: {pid:postVo.post.id}} ">
                                             {{postVo.post.title}}
                                         </router-link>
-                                        <span>发表于{{postVo.post.createTimeStr}}</span>
+                                        <span>发表于{{formatDate(postVo.post.createdAt)}}</span>
                                     </h4>
 
                                     <div class="p_tag">
@@ -99,6 +99,14 @@
             })
         },
         methods:{
+            formatDate(dateString) {
+                if (!dateString) return '';
+                const date = new Date(dateString);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            },
             page(currentPage) {
                 const _this = this;
                 //要先登录才能关注或取消关注

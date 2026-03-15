@@ -11,8 +11,10 @@ type Post struct {
 	CategoryID int64     `gorm:"column:category_id;index" json:"category_id"`       // 分类ID
 	Views      int64     `gorm:"column:views;default:0" json:"views"`               // 浏览量
 	Status     int       `gorm:"column:status;type:tinyint;default:1" json:"status"` // 1:正常 0:禁用
-	CreatedAt  time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`
-	UpdatedAt  time.Time `gorm:"column:updated_at;autoUpdateTime" json:"updated_at"`
+	Type       int       `gorm:"column:type;type:int(11);default:0" json:"type"`     // 1:置顶 0:普通
+	LikeCount  int64     `gorm:"column:like_count;type:int(11);default:0" json:"likeCount"` // 点赞数
+	CreatedAt  time.Time `gorm:"column:created_at;autoCreateTime" json:"createdAt"`
+	UpdatedAt  time.Time `gorm:"column:updated_at;autoUpdateTime" json:"updatedAt"`
 }
 
 // TableName 指定表名
@@ -88,6 +90,26 @@ func (p *Post) GetStatus() int {
 // SetStatus 设置状态
 func (p *Post) SetStatus(status int) {
 	p.Status = status
+}
+
+// GetType 获取类型
+func (p *Post) GetType() int {
+	return p.Type
+}
+
+// SetType 设置类型
+func (p *Post) SetType(postType int) {
+	p.Type = postType
+}
+
+// GetLikeCount 获取点赞数
+func (p *Post) GetLikeCount() int64 {
+	return p.LikeCount
+}
+
+// SetLikeCount 设置点赞数
+func (p *Post) SetLikeCount(likeCount int64) {
+	p.LikeCount = likeCount
 }
 
 // GetCreatedAt 获取创建时间

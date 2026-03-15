@@ -1,0 +1,42 @@
+package db
+
+import (
+	"forum_service/src/model"
+	"gorm.io/gorm"
+)
+
+// GetPostsByUserID 根据用户ID获取帖子列表
+func GetPostsByUserID(db *gorm.DB, userID int64, currentPage, pageSize int) ([]*model.Post, int64, error) {
+	var posts []*model.Post
+	var total int64
+
+	// 获取总数
+	err := db.Model(&model.Post{}).Where("user_id = ?", userID).Count(&total).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// 获取分页数据
+	offset := (currentPage - 1) * pageSize
+	err = db.Where("user_id = ?", userID).
+		Order("created_at DESC").
+		Limit(pageSize).
+		Offset(offset).
+		Find(&posts).Error
+
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return posts, total, nil
+}
+
+// GetPostByID 根据ID获取帖子
+func GetPostByID(db *gorm.DB, postID int64) (*model.Post, error) {
+	var post model.Post
+	err := db.Where("id = ?", postID).First(&post).Error
+	if err != nil {
+		return nil, err
+	}
+	return &post, nil
+}

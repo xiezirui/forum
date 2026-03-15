@@ -33,7 +33,7 @@
                                 <router-link :to="{name : 'PostDetail' , params: {pid:postVo.post.id}} ">
                                     {{postVo.post.title}}
                                 </router-link>
-                                <span>收藏于{{postVo.collectTime}}</span>
+                                <span>收藏于{{formatDate(postVo.createdAt)}}</span>
                             </h4>
 
                             <div class="p_tag">
@@ -108,6 +108,14 @@
         methods:{
             fail(msg) {
                 this.$message.error(msg);
+            },
+            formatDate(dateString) {
+                if (!dateString) return '';
+                const date = new Date(dateString);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
             },
             page(currentPage) {
                 const _this = this;

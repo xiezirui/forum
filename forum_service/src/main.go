@@ -73,11 +73,21 @@ func main() {
 	if err != nil {
 		log.Fatal("数据库迁移失败:", err)
 	}
+	err = db.AutoMigrate(&model.Post{})
+	if err != nil {
+		log.Fatal("数据库迁移失败:", err)
+	}
+	err = db.AutoMigrate(&model.Collection{})
+	if err != nil {
+		log.Fatal("数据库迁移失败:", err)
+	}
 
 	// 4. 设置路由
 	r.Use(JWTMiddleware)
 	router.SetupUserRoutes(r, db)
 	router.SetupProfileRoutes(r, db)
+	router.SetupUserPostRoutes(r, db)
+	router.SetupCollectionRoutes(r, db)
 
 	// 5. 启动服务器
 	// 监听并在 0.0.0.0:8089 上启动服务

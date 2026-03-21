@@ -103,6 +103,9 @@
                                 console.log(data);
 
                                 sessionStorage.setItem("JWT_TOKEN", data.token);
+                                // 同时保存到localStorage，实现自动登录
+                                localStorage.setItem("JWT_TOKEN", data.token);
+                                localStorage.setItem("isLogin", "true");
                                 //请求用户信息
                                 _this.getInfo(data.token);
                                 _this.success()

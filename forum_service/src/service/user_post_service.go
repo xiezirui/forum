@@ -31,6 +31,26 @@ func (s *UserPostService) GetUserPosts(userID int64, currentPage, pageSize int) 
 		return nil, err
 	}
 
+	// 构建 PostVo 列表
+	var postVos []*PostVo
+	for _, post := range posts {
+		// 设置格式化的创建时间
+		post.CreateTimeStr = post.CreatedAt.Format("2006-01-02 15:04:05")
+
+		// 获取帖子作者信息
+		user, err := db.GetUserByID(s.db, post.UserID)
+		if err != nil {
+			continue
+		}
+
+		// 构建 PostVo
+		postVo := &PostVo{
+			Post: post,
+			User: user,
+		}
+		postVos = append(postVos, postVo)
+	}
+
 	// 构造返回数据
 	userPostData := &UserPostData{
 		User: &user,
@@ -38,7 +58,7 @@ func (s *UserPostService) GetUserPosts(userID int64, currentPage, pageSize int) 
 			CurrentPage: currentPage,
 			PageSize:    pageSize,
 			Total:       total,
-			Records:     posts,
+			Records:     postVos,
 		},
 	}
 
@@ -53,8 +73,8 @@ type UserPostData struct {
 
 // Pagination 分页数据结构
 type Pagination struct {
-	CurrentPage int           `json:"currentPage"`
-	PageSize    int           `json:"pageSize"`
-	Total       int64         `json:"total"`
-	Records     []*model.Post `json:"records"`
+	CurrentPage int       `json:"currentPage"`
+	PageSize    int       `json:"pageSize"`
+	Total       int64     `json:"total"`
+	Records     []*PostVo `json:"records"`
 }

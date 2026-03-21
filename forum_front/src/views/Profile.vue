@@ -134,7 +134,10 @@
                     _this.user = myData.user
                     _this.isMine = myData.isMine
                     _this.likeCount = myData.likeCount
-                    _this.user.avatar = _this.user.avatar
+                    // 拼接完整的头像URL
+                    if (_this.user.avatar && !_this.user.avatar.startsWith('http')) {
+                        _this.user.avatar = _this.uploadPath.replace(/\/$/, '') + _this.user.avatar;
+                    }
                     _this.followeeCount = myData.followeeCount
                     _this.followerCount = myData.followerCount
                     _this.hasFollowed = myData.hasFollowed

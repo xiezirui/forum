@@ -113,8 +113,77 @@ axios.interceptors.response.use(
 
 
 
+// 初始化应用状态
+function initApp() {
+    const token = window.sessionStorage.getItem('JWT_TOKEN');
+    const isLogin = window.sessionStorage.getItem("isLogin") === "true";
+    
+    if (token && isLogin) {
+        // 如果有token且登录状态为true，则获取用户信息
+        axios.get('/user/getInfo', {
+            headers: {
+                'Authorization': token
+            }
+        }).then(response => {
+            if (response.data.code === 200) {
+                const userData = response.data.data;
+                // 拼接完整的头像URL
+                if (userData.avatar && !userData.avatar.startsWith('http')) {
+                    userData.avatar = axios.defaults.baseURL.replace(/\/$/, '') + userData.avatar;
+                }
+                store.commit("setUserInfo", userData);
+                store.commit("setLoginState", true);
+            }
+        }).catch(error => {
+            console.error("获取用户信息失败:", error);
+            // 如果获取用户信息失败，清除登录状态
+            store.commit("logout");
+        });
+    } else {
+        // 如果没有token或登录状态为false，尝试从localStorage获取
+        const localToken = window.localStorage.getItem('JWT_TOKEN');
+        const localIsLogin = window.localStorage.getItem("isLogin") === "true";
+
+        if (localToken && localIsLogin) {
+            // 将localStorage中的token同步到sessionStorage
+            window.sessionStorage.setItem('JWT_TOKEN', localToken);
+            window.sessionStorage.setItem('isLogin', localIsLogin);
+
+            // 获取用户信息
+            axios.get('/user/getInfo', {
+                headers: {
+                    'Authorization': localToken
+                }
+            }).then(response => {
+                if (response.data.code === 200) {
+                    const userData = response.data.data;
+                    // 拼接完整的头像URL
+                    if (userData.avatar && !userData.avatar.startsWith('http')) {
+                        userData.avatar = axios.defaults.baseURL.replace(/\/$/, '') + userData.avatar;
+                    }
+                    // 保存用户信息到 localStorage
+                    window.localStorage.setItem('userInfo', JSON.stringify(userData));
+                    store.commit("setUserInfo", userData);
+                    store.commit("setLoginState", true);
+                }
+            }).catch(error => {
+                console.error("获取用户信息失败:", error);
+                // 如果获取用户信息失败，清除登录状态
+                store.commit("logout");
+                // 清除localStorage中的登录信息
+                window.localStorage.removeItem('JWT_TOKEN');
+                window.localStorage.removeItem('isLogin');
+                window.localStorage.removeItem('userInfo');
+            });
+        }
+    }
+}
+
 new Vue({
     router,
     store,
-    render: h => h(App)
+    render: h => h(App),
+    created() {
+        initApp();
+    }
 }).$mount('#app')

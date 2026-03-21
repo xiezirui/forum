@@ -88,7 +88,7 @@
         //頁面首先加載第一頁
         created() {
             const _this = this
-            _this.$axios.get('/user/userPost/+'+_this.$route.params.uid).then(res => {
+            _this.$axios.get('/user/userPost/'+_this.$route.params.uid).then(res => {
                 console.log(res)
                 _this.records = res.data.data.pagination.records
                 _this.currentPage = res.data.data.pagination.currentPage

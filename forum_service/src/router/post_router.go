@@ -19,5 +19,9 @@ func SetupPostRoutes(r *gin.Engine, db *gorm.DB) {
 		postGroup.GET("/detail/:id", postController.GetPostDetail)
 		// 发布帖子
 		postGroup.POST("/publish", postController.PublishPost)
+		// 设置帖子置顶
+		postGroup.GET("/top", postController.SetPostTop)
+		// 设置帖子精选
+		postGroup.GET("/wonderful", postController.SetPostWonderful)
 	}
 }

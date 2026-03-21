@@ -33,7 +33,7 @@
                                 <router-link :to="{name : 'PostDetail' , params: {pid:postVo.post.id}} ">
                                     {{postVo.post.title}}
                                 </router-link>
-                                <span>收藏于{{formatDate(postVo.createdAt)}}</span>
+                                <span>收藏于{{formatDate(postVo.post.createdAt)}}</span>
                             </h4>
 
                             <div class="p_tag">

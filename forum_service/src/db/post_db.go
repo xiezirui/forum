@@ -70,3 +70,13 @@ func GetPostList(db *gorm.DB, currentPage, pageSize int) ([]*model.Post, int64, 
 func CreatePost(db *gorm.DB, post *model.Post) error {
 	return db.Create(post).Error
 }
+
+// UpdatePostType 更新帖子类型（置顶/取消置顶）
+func UpdatePostType(db *gorm.DB, postID int64, postType int) error {
+	return db.Model(&model.Post{}).Where("id = ?", postID).Update("type", postType).Error
+}
+
+// UpdatePostStatus 更新帖子状态（精选/取消精选）
+func UpdatePostStatus(db *gorm.DB, postID int64, status int) error {
+	return db.Model(&model.Post{}).Where("id = ?", postID).Update("status", status).Error
+}

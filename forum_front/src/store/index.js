@@ -7,9 +7,9 @@ Vue.use(Vuex)
 
 //全局变量
 const store= new Vuex.Store({
-    state: sessionStorage.getItem('state') ? JSON.parse(sessionStorage.getItem('state')) : {
-        userInfo:JSON.parse(sessionStorage.getItem("userInfo")) || {}, //当前登录对象
-        isLogin: sessionStorage.getItem("isLogin") || false,        //当前登录状态
+    state: {
+        userInfo: JSON.parse(sessionStorage.getItem("userInfo")) || JSON.parse(localStorage.getItem("userInfo")) || {}, //当前登录对象
+        isLogin: sessionStorage.getItem("isLogin") === "true" || localStorage.getItem("isLogin") === "true",        //当前登录状态，确保转换为布尔值
         ws:null,//websocket连接端点
         userList:{},//聊天用户列表
         currentUser:{}, //当前聊天对象
@@ -37,15 +37,21 @@ const store= new Vuex.Store({
         },
         //只有通过state的修改，vue才能实时监控到全局变量的变化！
         setUserInfo(state,userInfo){
-            sessionStorage.setItem('userInfo', JSON.stringify(userInfo));//将传递的数据先保存到localStorage中
+            sessionStorage.setItem('userInfo', JSON.stringify(userInfo));//将传递的数据先保存到sessionStorage中
+            localStorage.setItem('userInfo', JSON.stringify(userInfo));//同时保存到localStorage中，实现自动登录
             state.userInfo = userInfo;// 之后才是修改state中的状态
         },
         setLoginState(state,flag){
             sessionStorage.setItem('isLogin',flag)
+            localStorage.setItem('isLogin',flag)
             state.isLogin = flag;
         },
         logout(state){
             sessionStorage.clear();
+            // 清除 localStorage 中的登录信息
+            localStorage.removeItem('JWT_TOKEN');
+            localStorage.removeItem('isLogin');
+            localStorage.removeItem('userInfo');
             state.isLogin = false;
             state.userInfo = {};
             if (state.ws != null){

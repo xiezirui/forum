@@ -116,3 +116,13 @@ func (ps *PostService) GetPostDetail(postID int64) (*PostVo, error) {
 
 	return postVo, nil
 }
+
+// SetPostTop 设置帖子置顶
+func (ps *PostService) SetPostTop(postID int64) error {
+	return db.UpdatePostType(ps.db, postID, 1)
+}
+
+// SetPostWonderful 设置帖子精选
+func (ps *PostService) SetPostWonderful(postID int64) error {
+	return db.UpdatePostStatus(ps.db, postID, 1)
+}

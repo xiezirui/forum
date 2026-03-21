@@ -166,3 +166,83 @@ func (pc *PostController) GetPostDetail(c *gin.Context) {
 		},
 	})
 }
+
+// SetPostTop 设置帖子置顶
+// @Summary 设置帖子置顶
+// @Tags 帖子
+// @Accept json
+// @Produce json
+// @Param id query int true "帖子ID"
+// @Success 200 {object} object "成功"
+// @Router /post/top [get]
+func (pc *PostController) SetPostTop(c *gin.Context) {
+	// 获取帖子ID
+	postIDStr := c.Query("id")
+	postID, err := strconv.ParseInt(postIDStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "帖子ID格式错误",
+			"data":    nil,
+		})
+		return
+	}
+
+	// 调用service层设置帖子置顶
+	err = pc.postService.SetPostTop(postID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code":    500,
+			"message": "设置置顶失败: " + err.Error(),
+			"data":    nil,
+		})
+		return
+	}
+
+	// 返回成功信息
+	c.JSON(http.StatusOK, gin.H{
+		"code":    200,
+		"message": "设置置顶成功",
+		"data":    nil,
+	})
+}
+
+// SetPostWonderful 设置帖子精选
+// @Summary 设置帖子精选
+// @Tags 帖子
+// @Accept json
+// @Produce json
+// @Param id query int true "帖子ID"
+// @Success 200 {object} object "成功"
+// @Router /post/wonderful [get]
+func (pc *PostController) SetPostWonderful(c *gin.Context) {
+	// 获取帖子ID
+	postIDStr := c.Query("id")
+	postID, err := strconv.ParseInt(postIDStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "帖子ID格式错误",
+			"data":    nil,
+		})
+		return
+	}
+
+	// 调用service层设置帖子精选
+	err = pc.postService.SetPostWonderful(postID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code":    500,
+			"message": "设置精选失败: " + err.Error(),
+			"data":    nil,
+		})
+		return
+	}
+
+	// 返回成功信息
+	c.JSON(http.StatusOK, gin.H{
+		"code":    200,
+		"message": "设置精选成功",
+		"data":    nil,
+	})
+}

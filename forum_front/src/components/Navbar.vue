@@ -57,12 +57,18 @@
                 picturePath:'http://localhost:8089',
                 // picturePath:'http://47.115.88.155',
                 uploadPath:this.$axios.defaults.baseURL,
-                isLogin : this.$store.state.isLogin,
                 // activeIndex: '2',
-                userInfo:this.$store.state.userInfo,
                 keyword:'',
                 msgCount:0
             };
+        },
+        computed: {
+            isLogin() {
+                return this.$store.state.isLogin;
+            },
+            userInfo() {
+                return this.$store.state.userInfo;
+            }
         },
         methods: {
             handleSelect(key, keyPath) {

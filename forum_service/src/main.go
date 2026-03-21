@@ -15,8 +15,8 @@ import (
 func main() {
 	// 1. 创建一个默认的 Gin 引擎 (包含 Logger 和 Recovery 中间件)
 	r := gin.Default()
-
-	// 2. 添加CORS中间件
+ 
+	// 2. 添加CORS中间件  处理跨域前后端
 	r.Use(func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
@@ -31,7 +31,7 @@ func main() {
 		c.Next()
 	})
 
-	// JWT中间件
+	// JWT中间件 token
 	JWTMiddleware := func(c *gin.Context) {
 		// 获取Authorization header
 		authHeader := c.GetHeader("Authorization")
